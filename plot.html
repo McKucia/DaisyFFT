@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Wykres częstotliwości</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <style>
+        body {
+            background-color: #222;
+            color: #fff;
+            font-family: Arial, sans-serif;
+        }
+
+        h1 {
+            text-align: center;
+            padding-top: 20px;
+        }
+
+        #chart {
+            width: 80%;
+            height: 700px;
+            margin: 20px auto;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .file-upload {
+            display: inline-block;
+            background-color: #555;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .file-upload:hover {
+            background-color: #777;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+            }
+            100% {
+                opacity: 1;
+            }
+        }
+
+        .animated {
+            animation-duration: 1s;
+            animation-fill-mode: both;
+        }
+    </style>
+</head>
+<body>
+    <h1>Wykres częstotliwości</h1>
+    <div id="chart" class="animated"></div>
+
+    <script>
+        // Funkcja wczytująca dane z pliku
+        function loadFile() {
+            var input = document.getElementById("fileInput");
+            var file = input.files[0];
+            var reader = new FileReader();
+
+            reader.onload = function (e) {
+                var contents = e.target.result;
+                var data = contents.split(',').map(Number);
+
+                // Wywołanie funkcji do generowania wykresu
+                generateChart(data);
+            };
+
+            reader.readAsText(file);
+        }
+
+        // Funkcja generująca wykres
+        function generateChart(data) {
+            var trace = {
+                x: Array.from({ length: data.length }, (_, i) => i),
+                y: data,
+                type: 'bar',
+                line: {
+                    color: '#ffab00'
+                }
+            };
+
+            var layout = {
+                title: 'Wykres częstotliwości',
+                titlefont: {
+                    color: '#fff'
+                },
+                xaxis: {
+                    title: 'Numer próbki',
+                    titlefont: {
+                        color: '#fff'
+                    },
+                    tickfont: {
+                        color: '#fff'
+                    }
+                },
+                yaxis: {
+                    title: 'Częstotliwość',
+                    titlefont: {
+                        color: '#fff'
+                    },
+                    tickfont: {
+                        color: '#fff'
+                    }
+                },
+                plot_bgcolor: '#222',
+                paper_bgcolor: '#222'
+            };
+
+            var config = {
+                responsive: true
+            };
+
+            Plotly.newPlot('chart', [trace], layout, config);
+            animateChart();
+        }
+
+        // Funkcja animująca wykres
+        function animateChart() {
+            var chart = document.getElementById('chart');
+            chart.classList.remove('animated');
+            void chart.offsetWidth;
+            chart.classList.add('animated');
+        }
+    </script>
+
+    <label for="fileInput" class="file-upload">Wybierz plik</label>
+    <input type="file" id="fileInput" accept=".txt" onchange="loadFile()">
+</body>
+</html>
